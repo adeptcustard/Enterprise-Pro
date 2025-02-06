@@ -1,7 +1,6 @@
-# Enterprise-Pro
-Project - **Workflow Management System**
+# Project - **Workflow Management System**
 
-## Project Overview (Taken from Canvas)
+## Overview (Taken from Canvas)
 This project is a **web-based workflow management system** designed for the **Yorkshire and Humber Regional Organised Crime Unit (YHROCU)** to manage **non-crime related activities**. The system enables **task assignment, tracking, and reporting** for staff and supervisors while ensuring secure and structured task management.
 
 ## Key Features
