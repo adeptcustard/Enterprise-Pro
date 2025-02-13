@@ -1,0 +1,48 @@
+												Team Minutes:
+
+Meeting 1:
+Hosted by Yaqoob Muhammad 
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Haris Kadu, Filza Tahir, Mohammed Ismail, Yaqoob Muhammad. 
+NO ABSENTEES. 
+14:00-15:00 | 28/01/2025
+Team members introduced themselves to one another; we discussed each of our strengths and then looked over the project options given on canvas. 
+We worked through all of them and evaluated which ones out of the five we would like to do but also how they would suit each out strengths. 
+We came to the conclusion that projects 1, 5 and 2 respectively would be the best choices in accordance to our team strengths but also our liking. 
+We then collaborated and wrote our Project Justification in which we all showcased the mentioned strengths and why we should have our first choice. 
+Plan for Next Week: 
+Start the designing process after asking the client various questions in relation to our project and their preferences. 
+
+Meeting 2:
+Hosted by Awais Hussain
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail.
+Absentee: Haris Kadu - absent due to mosque exam. 
+14:00-15:50 | 14/02/2025
+Team members arrived and began to work through ideas for potential question for the upcoming meeting with the client. 
+Meeting was scheduled at 15:20-15:40.
+We worked through our 1 hour 20 minutes of prep time by collaborating and working out questions; we decided to narrow it down to questions on users interacting with the program, softwares already in use by the client to ensure compatibility, interfacing and a couple others. 
+We allocated our team members to ask a question each at least to ensure we all got the information we needed to work efficiently on our project. 
+We met with the client at around 15:20 who introduced himself and told us about what he expected with the required software. 
+We both voice recorded and took notes on what he replied and told us about so we did not miss any crucial information. 
+
+Meeting 3:
+Hosted by Awais Hussain
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu.
+NO ABSENTEES.
+14:00-15:30 | 05/02/2025
+Team members were shown how to use GitHub by Awais. 
+Users will be uploading documents and keeping track of work through the application and throughout the 12 weeks. 
+Plan for Next Week: 
+Assign roles within the project and allocate tasks. 
+Come up with rudimentary design of the project.
+
+Meeting 4:
+Hosted by Yaqoob Muhammad
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu. 
+NO ABSENTEES.
+14:00-15:45 | 11/02/2025
+Confirmed roles within the team.
+Began to design the Software Design Document, System Requirement Specification, and Class Diagrams. 
+
+
+
+
