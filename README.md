@@ -21,9 +21,9 @@ This project is a **web-based workflow management system** designed for the **Yo
 _TBD - Will include setup instructions once development progresses._
 
 ## Tech Stack (Planned)
-- **Frontend:** React.js / Vue.js (TBD)
-- **Backend:** Node.js (Express) / Django / Flask (TBD)
-- **Database:** MySQL / PostgreSQL (TBD)
+- **Frontend:** React.js
+- **Backend:** Node.js (Express)
+- **Database:** PostgreSQL
 - **Authentication:** OAuth (Google, Microsoft, etc.)
 - **Email Service:** SMTP / SendGrid / Mailgun (TBD)
 
