@@ -1,7 +1,16 @@
 Meeting 4:
+Week 4 of Project
 Hosted by Yaqoob Muhammad
 Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu. 
 NO ABSENTEES.
+
 14:00-15:45 | 11/02/2025
-Confirmed roles within the team.
-Began to design the Software Design Document, System Requirement Specification, and Class Diagrams. 
+
+Everyone's roles were confirmed. 
+SRS was completed by Saleh and Haris; looked over by team members and had a few adjustments which were to be completed by the 13th at the latest. 
+This meant Yaqoob could email the client the next day and have written confirmation so the group could go ahead and begin the project properly. 
+Rudimentary design was collaborated on by the whole group. 
+
+Plan for Next Meeting:
+Group individuals to begin their individual tasks. 
+Email to be sent to client by the 13th. 
