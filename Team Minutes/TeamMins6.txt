@@ -1,10 +1,24 @@
-Meeting 6: 18/02/2025
+Meeting 6: 
+Week 5 of Project. 
 Host: Yaqoob Muhammad 
 Participants: Awais Hussain, Naqib Rehman, Saleh Aldarhani, Haris Kadu, Filza Tahir, Mohammad Ismail
-14:00-15:00
-Recieved the confirmation from client.
-Design and code are being prepared by those who have been allocated to do so.
+NO ABSENTEES 
 
-Plan for Next Week: 
-Finish the code and scrape out any bugs. 
-Be ready to submit the prototype. 
+14:00-15:00 | 18/02/2025
+
+Confirmation of the client was recieved on the 14th by the client. 
+Team members predominantly met up to look over the client email together and ensure everyone knows what they are doing. 
+Any queries regarding the project were answered and everyone ready to begin their part of project. 
+
+Plan for the Week: 
+To begin what was discussed on the meeting on 11/02/2025 as shown below: 
+Begin to design: Database, AND Part of the login, users, supervisors, and admin page using HTML and CSS by those allocated to do so. 
+
+Allocations: 
+Haris - Design database
+Yaqoob - Create table using SQL
+Filza - Create dummy data using SQL 
+Saleh - Design login page using PHP, HTML, CSS and JavaScript.  
+Awais - Design users page using PHP, HTML, CSS and JavaScript.   
+Filza - Design supervisor page using PHP, HTML, CSS and JavaScript.  
+Haris - Design admin page using PHP, HTML, CSS and JavaScript.  
