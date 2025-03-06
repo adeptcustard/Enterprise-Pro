@@ -1,0 +1,33 @@
+Meeting 9:
+Week 7 of Project 
+Hosted by Yaqoob Muhammad 
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu.
+NO ABSENTEES
+
+14:00-15:00 | 04/03/2025
+
+Checked if everyone had completed their tasks both from those members who started in week 5 and those who started in week 6. 
+WEEK 5 TASKS: 
+Haris - Design database
+Yaqoob - Create table using SQL
+Filza - Create dummy data using SQL 
+Saleh - Design login page using PHP, HTML, CSS and JavaScript.  
+Awais - Design users page using PHP, HTML, CSS and JavaScript.   
+Filza - Design supervisor page using PHP, HTML, CSS and JavaScript.  
+Haris - Design admin page using PHP, HTML, CSS and JavaScript.  
+WEEK 6-7 TASKS: 
+LOGIN PAGE:
+- Code JS to connect PHP and gather input details: Ismail
+- Code PHP to compare login data: Naqib 
+USERS PAGE: 
+- Code JS to connect PHP and make page dynamic: Saleh 
+- Code PHP to fetch user tasks: Naqib
+SUPERVISORS PAGE: 
+- Code JS to connect PHP and make page dynamic: Yaqoob 
+- Code PHP to fetch supervisor tasks: Awais 
+ADMIN PAGE: 
+- Code JS to connect PHP and make page dynamic: Naqib 
+- Code PHP to fetch all tasks: Ismail 
+
+Plan for Next Meeting: 
+Carry out peer review on the whole team. This is to be done by everyone. 
