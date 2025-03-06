@@ -1,9 +1,29 @@
-Meeting 5: 13/02/2025
+Meeting 5: 
+Week 4 of Project. 
 Host: Yaqoob Muhammad 
-Participants: Awais Hussain, Naqib Rehman, Saleh Aldarhani, Haris Kadu, Filza Tahir, Mohammad Ismail
-11:00-12:00
-Team members emailed the client confirming the specification of the project. 
-Everyone read over the NDA. 
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldarhani, Haris Kadu, Filza Tahir, Mohammad Ismail
+No ABSENTEES
 
-Plan for Next Week: 
-Await confirmation from client so we can start design of website. 
+11:00-12:00 | 13/02/2025
+
+Team members arrived and firstly looked over the SRS Prototype completed by Saleh and Haris.
+SRS was confirmed and emailed the client by Yaqoob. 
+Everyone read over the NDA. 
+NDA was signed by the group. 
+
+Plan for Next Meeting: 
+Await confirmation from client. 
+
+Plan for Next Week (5):
+Begin to design: 
+- Database, 
+- Part of the login, users, supervisors, and admin page using HTML and CSS. 
+
+Allocations: 
+Haris - Design database
+Yaqoob - Create table using SQL
+Filza - Create dummy data using SQL 
+Saleh - Design login page using PHP, HTML, CSS and JavaScript.  
+Awais - Design users page using PHP, HTML, CSS and JavaScript.  
+Filza - Design supervisor page using PHP, HTML, CSS and JavaScript.  
+Haris - Design admin page using PHP, HTML, CSS and JavaScript.  
