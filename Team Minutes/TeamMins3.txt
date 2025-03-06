@@ -1,10 +1,20 @@
 Meeting 3:
+Week 3 of the Project 
 Hosted by Awais Hussain
 Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu.
 NO ABSENTEES.
+
 14:00-15:30 | 05/02/2025
+
 Team members were shown how to use GitHub by Awais. 
 Users will be uploading documents and keeping track of work through the application and throughout the 12 weeks. 
+Group leader Yaqoob drew up an example email to send to client confirming the requirements for the software the team will be developing.
+The actual SRS Prototype of the project will be done by Saleh and Haris and sent to all the group between this meeting and the next to look over and give confirmation that it is correct. 
+SRS was given till the 13th as a deadline to be completed, checked over and confirmed by the group leader. 
+Email will be sent in the meeting on the 13th. 
+Members discussed what roles would be best for each individual to do.
+
 Plan for Next Week: 
-Assign roles within the project and allocate tasks. 
-Come up with rudimentary design of the project.
+Email will be sent to client to confirm the SRS. 
+Confirm final allocations for group roles. 
+Collaborate on a rudimentary design of the project.
