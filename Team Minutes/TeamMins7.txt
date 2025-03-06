@@ -1,0 +1,28 @@
+Meeting 7: 
+Week 5 of Project 
+Hosted by Yaqoob Muhammad. 
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu.
+NO ABSENTEES.
+
+15:00-16:00 | 22/02/2025
+
+Zoom Meeting. 
+Team members begun their allocated tasks and have nearly completed them. 
+It was decided they should be done at the latest by the following Monday (24/02/2025). 
+
+Plan for Next Week: 
+Check if week 5 tasks are completed. 
+Begin week 6 tasks which are as follows: 
+LOGIN PAGE:
+- Code JS to connect PHP and gather input details: Ismail
+- Code PHP to compare login data: Naqib 
+USERS PAGE: 
+- Code JS to connect PHP and make page dynamic: Saleh 
+- Code PHP to fetch user tasks: Naqib
+SUPERVISORS PAGE: 
+- Code JS to connect PHP and make page dynamic: Yaqoob 
+- Code PHP to fetch supervisor tasks: Awais 
+ADMIN PAGE: 
+- Code JS to connect PHP and make page dynamic: Naqib 
+- Code PHP to fetch all tasks: Ismail 
+These tasks will carry over onto week 7. 
