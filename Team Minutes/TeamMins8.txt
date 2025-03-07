@@ -1,0 +1,27 @@
+Meeting 8:
+Week 6 of Project 
+Hosted by Yaqoob Muhammad 
+Participants: Awais Hussain, Naqib Rahman, Saleh Aldharhani, Filza Tahir, Yaqoob Muhammad, Mohammed Ismail, Haris Kadu.
+NO ABSENTEES
+
+14:00-16:00 | 25/02/2025
+
+All week 5 tasks are completed by the members. 
+Week 6 tasks have been started by those allocated to do so and will carry over onto the next week. 
+The allocations were mentioned in TeamMins7 and are as follows: 
+LOGIN PAGE:
+- Code JS to connect PHP and gather input details: Ismail
+- Code PHP to compare login data: Naqib 
+USERS PAGE: 
+- Code JS to connect PHP and make page dynamic: Saleh 
+- Code PHP to fetch user tasks: Naqib
+SUPERVISORS PAGE: 
+- Code JS to connect PHP and make page dynamic: Yaqoob 
+- Code PHP to fetch supervisor tasks: Awais 
+ADMIN PAGE: 
+- Code JS to connect PHP and make page dynamic: Naqib 
+- Code PHP to fetch all tasks: Ismail 
+
+Plan for Next Week: 
+Ensure all tasks are completed by the end of week 7. 
+Ensure peer review is completed. 

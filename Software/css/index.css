@@ -1,0 +1,75 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+/* Header Styling */
+header {
+    background-color: #001f3f;
+    padding: 20px;
+}
+
+header img {
+    width: 200px;
+    height: auto;
+}
+
+/* Main Container */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Headings */
+h1 {
+    color: #001f3f;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #333;
+}
+
+/* Features Section */
+.features {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.feature-box {
+    background: #e1e1e1;
+    padding: 15px;
+    border-radius: 8px;
+    width: 45%;
+}
+
+/* Login Button */
+.login-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #001f3f;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.login-button:hover {
+    background-color: #003366;
+}
+
+header img {
+    width: 400px;
+    height: auto;
+}
