@@ -1,0 +1,13 @@
+- These are logins for variety roles to test the login and test data gathering
+
+Admin Logins:
+Email: admin@yhrocu.uk Password: Admin@123
+
+Supervisor Logins:
+Email: supervisor1@yhrocu.uk Password: Super@123
+Email: supervisor2@yhrocu.uk Password: Super@123
+
+User Logins:
+Email: user1@yhrocu.uk Password: User@123
+Email: user2@yhrocu.uk Password: User@123
+Email: user3@yhrocu.uk Password: User@123
