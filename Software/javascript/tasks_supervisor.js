@@ -67,10 +67,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
         tasks.forEach(task => {
             const li = document.createElement("li");
+
+            const primaryUser = task.primary_user
+                ? `${task.primary_user.first_name} ${task.primary_user.last_name} (${task.primary_user.email})`
+                : "None";
+
+            const additionalUsers = task.assigned_users && task.assigned_users.length > 0
+                ? task.assigned_users.map(user =>
+                    `${user.first_name} ${user.last_name} (${user.email})`
+                ).join(", ")
+                : "None";
+
             li.innerHTML = `
-                <strong>${task.title}</strong> 
+                <strong>${task.title}</strong>
                 <p>Status: ${task.status}</p>
                 <p>Created: ${formatDateTime(task.created_at)} | Deadline: ${formatDateTime(task.deadline)}</p>
+                <p><strong>Primary User:</strong> ${primaryUser}</p>
+                <p><strong>Additional Users:</strong> ${additionalUsers}</p>
                 <p>Actions: ${task.completed_actions}/${task.total_actions} completed</p>
                 <button onclick="openTask(${task.id}, '${currentView}')">View Details</button>
             `;
