@@ -1,4 +1,3 @@
-/* General styling */
 body {
     font-family: Arial, sans-serif;
     background-color: #1a1a2e; 
@@ -10,7 +9,6 @@ body {
     margin: 0;
 }
 
-/* Login container */
 .login-container {
     background-color: #16213e;
     padding: 30px;
@@ -21,7 +19,6 @@ body {
     max-width: 400px;
 }
 
-/* Headings */
 h2 {
     margin-bottom: 5px;
     font-size: 24px;
@@ -33,14 +30,12 @@ h3 {
     color: #a3a3a3;
 }
 
-/* Form styling */
 form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* Input fields */
 input[type="email"],
 input[type="password"] {
     width: 95%;
@@ -52,12 +47,10 @@ input[type="password"] {
     color: #333;
 }
 
-/* Focus effect on input */
 input:focus {
     outline: 2px solid #007bff; 
 }
 
-/* Submit button */
 button {
     width: 100%;
     padding: 10px;
@@ -71,19 +64,16 @@ button {
     align-self: center;
 }
 
-/* Button hover effect */
 button:hover {
     background-color: #0056b3; 
 }
 
-/* Error message */
 .error-message {
     color: #ff4d4d;
     font-size: 14px;
     margin-top: 5px;
 }
 
-/* Forgot password link */
 p {
     margin-top: 10px;
     font-size: 14px;
@@ -99,7 +89,6 @@ p a:hover {
     text-decoration: underline;
 }
 
-/* Responsive Design */
 @media (max-width: 500px) {
     .login-container {
         padding: 20px;
