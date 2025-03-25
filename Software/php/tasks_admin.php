@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Define the title of the webpage -->
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard | YHROCU</title>
     
     <!-- Link external CSS file for styling -->
     <link rel="stylesheet" href="../css/tasks_admin.css">
@@ -38,18 +38,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
     <nav class="admin-navbar">
         <ul>
             <li><a href="tasks_admin.php">Dashboard</a></li>
+            <li><a href="help_requests.php">Help Requests</a></li>
             <li><a href="tasks_management.php">Tasks Management</a></li>
             <li><a href="users_admin.php">Users Management</a></li>
-            <li><a href="vehicles_admin.php">Vehicle Inventory</a></li>
-            <li><a href="help_requests.php">Help Requests</a></li>
             <li><a href="../php/logout.php" class="logout">Logout</a></li>
+            <li><a href=".php">Profile</a></li>
         </ul>
     </nav>
 
 
     <!-- Header section displaying user name and task overview -->
     <div id="user-header">
-        <h1>Welcome, <span id="user-name"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?></span> To the YHROCU WorkFlow Management System</h1>
+        <h1>Welcome, <span id="user-name"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?></span> to the YHROCU WorkFlow Management System</h1>
         <h2>View All Tasks Here</h2>
     </div>
 
@@ -144,5 +144,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
     <script src="../javascript/tasks_admin.js"></script>
 
 </body>
+
 </html>
 
