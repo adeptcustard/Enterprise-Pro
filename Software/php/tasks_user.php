@@ -21,26 +21,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'User') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Define the title of the webpage -->
-    <title>User Tasks</title>
+    <title>User Dashboard | YHROCU</title>
     
     <!-- Link external CSS file for styling -->
     <link rel="stylesheet" href="../css/tasks_user.css">
 
     <script>
-    // Prevent the user from navigating back to the login page after logging in
-    history.pushState(null, null, location.href);
-    window.onpopstate = function () {
-        // Reloads the page when the back button is clicked
-        location.reload();
-    };
+        //prevent the user from navigating back to the login page after logging in
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            //reloads the page when the back button is clicked
+            location.reload();
+        };
     </script>
 
 </head>
+
 <body>
+    
+    <!-- Navigation bar specific to Supervisor role -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="tasks_supervisor.php">Dashboard</a></li> 
+            <li><a href="help_requests.php">Help Requests</a></li>
+            <li><a href="../php/logout.php" class="logout">Logout</a></li>
+            <li><a href=".php">Profile</a></li>     
+        </ul>
+    </nav>
 
     <!-- Header section displaying user name and task overview -->
     <div id="user-header">
-        <h1>Welcome, <span id="user-name"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?></span> To the YHROCU WorkFlow Management System</h1>
+        <h1>Welcome, <span id="user-name"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?></span> to the YHROCU WorkFlow Management System</h1>
         <h2>View Your Assigned Tasks Here</h2>
     </div>
 

@@ -5,7 +5,7 @@ $dbname = 'Enterprise-Pro';
 //name of user for database
 $user = 'postgres';
 //password for user
-$password = 'Naqib789';
+$password = 'DBAdmin123';
 
 try {
     //create a new PDO connection for PostgreSQL

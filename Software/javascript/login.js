@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function(){
         console.error("❌ Login form not found!");
         return;
     }
+    
     //debugging message confirming form detection
     console.log("✅ Login form found!"); 
 

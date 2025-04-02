@@ -1,0 +1,73 @@
+- This data is used as test during code to ensure code is working correctly to gather data as well as to ensure code is
+functioning correctly.
+
+- Make sure this exists for inserting data manually using sql
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES
+('admin@yhrocu.uk', crypt('Admin@123', gen_salt('bf')), 'Admin', 'John', 'Harrison'),
+
+('supervisor1@yhrocu.uk', crypt('Super@123', gen_salt('bf')), 'Supervisor', 'Sarah', 'Mitchell'),
+('supervisor2@yhrocu.uk', crypt('Super@123', gen_salt('bf')), 'Supervisor', 'James', 'Williams'),
+
+('user1@yhrocu.uk', crypt('User@123', gen_salt('bf')), 'User', 'Michael', 'Anderson'),
+('user2@yhrocu.uk', crypt('User@123', gen_salt('bf')), 'User', 'Emily', 'Scott'),
+('user3@yhrocu.uk', crypt('User@123', gen_salt('bf')), 'User', 'David', 'Clark');
+
+INSERT INTO tasks (title, description, status, team, owner, deadline, last_updated_by)
+VALUES
+('Review Crime Reports', 'Analyse recent crime reports to identify patterns.', 'Pending', 'Analysis Team', 1, NOW() + INTERVAL '7 days', 1),
+('Patrol Schedule Update', 'Revise and optimise the next week’s patrol schedule.', 'In Progress', 'Operations Team', 2, NOW() + INTERVAL '5 days', 2),
+('Cybercrime Investigation', 'Investigate recent cyber fraud incidents targeting businesses.', 'To Be Reviewed', 'Cybercrime Unit', 2, NOW() + INTERVAL '10 days', 2),
+('Public Safety Awareness', 'Prepare materials for a public safety campaign.', 'Pending', 'Community Engagement', 3, NOW() + INTERVAL '15 days', 3),
+('Internal Security Audit', 'Ensure all security protocols are being followed.', 'Pending', 'Internal Affairs', 1, NOW() + INTERVAL '8 days', 1);
+
+INSERT INTO task_assignments (task_id, user_id) VALUES
+-- Assigning users to "Review Crime Reports"
+(1, 4), 
+(1, 5), 
+
+-- Assigning users to "Patrol Schedule Update"
+(2, 5), 
+(2, 6), 
+
+-- Assigning users to "Cybercrime Investigation"
+(3, 4), 
+(3, 6), 
+
+-- Assigning users to "Public Safety Awareness"
+(4, 5), 
+
+-- Assigning users to "Internal Security Audit"
+(5, 4), 
+(5, 6); 
+
+INSERT INTO task_actions (task_id, action_description, completed) VALUES
+(1, 'Analyse robbery patterns in central London.', FALSE),
+(1, 'Identify high-crime areas for extra patrols.', FALSE),
+
+(2, 'Review last week’s patrol efficiency.', TRUE),
+(2, 'Suggest improvements for night patrols.', FALSE),
+
+(3, 'Trace IP addresses used in fraud cases.', FALSE),
+(3, 'Cross-check transaction logs with known fraud cases.', FALSE),
+
+(4, 'Design posters for public safety tips.', TRUE),
+(4, 'Organise a local community meeting.', FALSE),
+
+(5, 'Conduct interviews with staff about security practices.', FALSE),
+(5, 'Prepare a report on security protocol compliance.', FALSE);
+
+INSERT INTO task_comments (task_id, user_id, comment) VALUES
+(1, 4, 'We should also look into trends from last year’s reports.'),
+(2, 5, 'I have assigned additional patrols for Friday nights.'),
+(3, 6, 'Bank logs indicate a repeated fraud pattern.'),
+(4, 5, 'Community engagement looks promising for this initiative.'),
+(5, 4, 'Ensure data security protocols are followed.');
+
+INSERT INTO task_files (task_id, file_name, file_path, uploaded_by) VALUES
+(1, 'crime_report_2024.pdf', '/uploads/reports/crime_report_2024.pdf', 4),
+(2, 'patrol_schedule.xlsx', '/uploads/schedules/patrol_schedule.xlsx', 5),
+(3, 'cybercrime_analysis.docx', '/uploads/investigations/cybercrime_analysis.docx', 6),
+(4, 'public_safety_poster.jpg', '/uploads/materials/public_safety_poster.jpg', 5),
+(5, 'security_audit_notes.pdf', '/uploads/internal/security_audit_notes.pdf', 4);

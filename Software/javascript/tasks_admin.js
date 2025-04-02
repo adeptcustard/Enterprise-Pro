@@ -39,10 +39,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.success) {
                 tasks = data.tasks;
                 displayTasks(tasks);
-            } else {
+            } 
+            else {
                 taskList.innerHTML = `<p class="error">${data.message}</p>`;
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("❌ Error fetching tasks:", error);
             taskList.innerHTML = `<p class="error">Failed to load tasks. Please try again.</p>`;
         }
@@ -62,10 +64,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
         filteredTasks.forEach(task => {
             const li = document.createElement("li");
+
+            const primaryUser = task.primary_user
+                ? `${task.primary_user.first_name} ${task.primary_user.last_name} (${task.primary_user.email})`
+                : "None";
+
+                
+            const additionalUsers = task.additional_users && task.additional_users.length > 0
+                ? task.additional_users.map(user => `${user.first_name} ${user.last_name} (${user.email})`).join(", ")
+                : "None";
+
             li.innerHTML = `
-                <strong>${task.title}</strong> 
-                <p>Status: <span class="task-status">${task.status}</span></p>
+                <strong>${task.title}</strong>
+                <p>Status: ${task.status}</p>
                 <p>Created: ${formatDateTime(task.created_at)} | Deadline: ${formatDateTime(task.deadline)}</p>
+                <p><strong>Created By:</strong> ${primaryUser}</p>
+                <p><strong>Additionally Assigned Users:</strong> ${additionalUsers}</p>
+                <p>Actions: ${task.completed_actions}/${task.total_actions} completed</p>
                 <button onclick="openTask(${task.id})">View Details</button>
             `;
             taskList.appendChild(li);
@@ -123,15 +138,29 @@ document.addEventListener("DOMContentLoaded", function () {
     //function to open a selected task and display its details
     window.openTask = function (taskId) {
         console.log("🔍 Opening Task ID:", taskId);
-    
+        
+        //ensure taskId is an Integer
         taskId = parseInt(taskId, 10);
         const task = tasks.find(t => parseInt(t.id, 10) === taskId);
-    
+        
+        //debugging
         if(!task){
             console.error("❌ Task not found:", taskId);
             return;
         }
-    
+        
+        //store Task ID in the hidden input field
+        const taskIdField = document.getElementById("task-id");
+        if (taskIdField) {
+            taskIdField.value = task.id;
+        }
+        else {
+            console.error("❌ Error: task-id field not found in the DOM!");
+            return;
+        }
+
+        //update task details section
+        document.getElementById("task-id").value = task.id;
         document.getElementById("task-title").innerText = task.title;
         document.getElementById("task-description").innerText = task.description;
         document.getElementById("task-status").innerText = task.status;
@@ -139,10 +168,12 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("task-deadline").innerText = formatDateTime(task.deadline);
         document.getElementById("task-actions").innerText = `${task.completed_actions ?? 0}/${task.total_actions ?? 0} completed`;
     
+        //update progress bar 
         const progressPercentage = task.total_actions > 0 ? (task.completed_actions / task.total_actions) * 100 : 0;
         document.getElementById("task-progress").style.width = `${progressPercentage}%`;
         
-        
+        fetchTaskLog(task.id);
+
         const primaryAssignedUser = document.getElementById("primary-assigned-user");
 
         //display Primary Assigned User
@@ -203,6 +234,90 @@ document.addEventListener("DOMContentLoaded", function () {
     window.toggleFilters = function(){
         filterPanel.classList.toggle("hidden");
     };
+
+    //add comment function
+    window.addComment = async function () {
+        const commentInput = document.getElementById("new-comment");
+        const taskIdField = document.getElementById("task-id");
+
+        if (!commentInput) {
+            console.error("❌ Error: 'new-comment' field not found in the DOM!");
+            return;
+        }
+
+        if (!taskIdField) {
+            console.error("❌ Error: 'task-id' field not found in the DOM!");
+            return;
+        }
+
+        const taskId = taskIdField.value;
+        const commentText = commentInput.value.trim();
+
+        if (!commentText) {
+            alert("Comment cannot be empty!");
+            return;
+        }
+
+        try {
+            const response = await fetch("../php/add_comment.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `task_id=${taskId}&comment=${encodeURIComponent(commentText)}`
+            });
+
+            const data = await response.json();
+            console.log("💬 Comment Response:", data);
+
+            if (data.success) {
+                //clear input field
+                commentInput.value = "";
+
+                //refresh comments
+                fetchTaskLog(taskId);
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error("❌ Error adding comment:", error);
+            alert("Failed to add comment. Please try again.");
+        }
+    };
+
+    //display comments
+    function displayComments(comments) {
+        const commentsList = document.getElementById("comment-list");
+        commentsList.innerHTML = comments.length
+            ? comments.map(c => `<li><strong>${c.first_name} ${c.last_name}:</strong> ${c.comment} <small>(${formatDateTime(c.created_at)})</small></li>`).join("")
+            : "<p>No comments yet.</p>";
+    }
+
+    //display running log
+    function displayRunningLog(logEntries) {
+        const logList = document.getElementById("task-log");
+        logList.innerHTML = logEntries.length
+            ? logEntries.map(entry => `<li><strong>${entry.first_name} ${entry.last_name}:</strong> ${entry.action} <small>(${formatDateTime(entry.created_at)})</small></li>`).join("")
+            : "<p>No log entries yet.</p>";
+    }
+
+    //function to get task log and running log and dynamically create them onto webpage
+    async function fetchTaskLog(taskId) {
+        try {
+            const response = await fetch(`../php/fetch_task_log.php?task_id=${taskId}`);
+            const data = await response.json();
+
+            console.log("📜 Running Log Data:", data);
+
+            if (data.success) {
+                displayComments(data.comments);
+                displayRunningLog(data.log_entries);
+            } else {
+                document.getElementById("task-log").innerHTML = `<p>${data.message}</p>`;
+            }
+        } catch (error) {
+            console.error("❌ Error fetching task log:", error);
+            document.getElementById("task-log").innerHTML = "<p>Failed to load task log.</p>";
+        }
+    }
 
     //fetch tasks when the page loads
     fetchTasks();

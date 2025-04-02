@@ -1,10 +1,10 @@
 <?php
-// Start session to access session variables for authentication
+//start session to access session variables for authentication
 session_start();
 
-// Check if user is logged in and has the 'Supervisor' role
+//check if user is logged in and has the 'Supervisor' role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Supervisor') {
-    // Redirect unauthorized users to the login page
+    //redirect unauthorized users to the login page
     header("Location: ../html/login.html");
     exit; 
 }
@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Supervisor') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Define the title of the webpage -->
-    <title>Supervisor Dashboard</title>
+    <title>Supervisor Dashboard | YHROCU</title>
     
     <!-- Link external CSS file for styling -->
     <link rel="stylesheet" href="../css/tasks_supervisor.css"> 
@@ -43,20 +43,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Supervisor') {
     <nav class="admin-navbar">
         <ul>
             <li><a href="tasks_supervisor.php">Dashboard</a></li> 
-            <li><a href="vehicles_supervisor.php">Vehicle Inventory</a></li> 
-            <li><a href="help_requests.php">Help Requests</a></li> 
+            <li><a href="help_requests.php">Help Requests</a></li>
+            <li><a href=".php">Tasks Management</a></li>
+            <li><a href=".php">Users Management</a></li>
             <li><a href="../php/logout.php" class="logout">Logout</a></li>
+            <li><a href=".php">Profile</a></li>     
         </ul>
     </nav>
 
     <!-- Main page heading -->
-    <h1>Supervisor Dashboard</h1>
-    <h1>Welcome, <span id="user-name"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?></span> To the YHROCU WorkFlow Management System</h1>
-
-    <!-- Buttons to toggle between viewing tasks assigned to the supervisor and all tasks -->
+    <div id="user-header">
+        <h1>Supervisor Dashboard</h1>
+        <h1>Welcome, <span id="user-name"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?></span> to the YHROCU WorkFlow Management System</h1>
+    </div>
+    
+    <!-- Buttons to toggle between "My Tasks" and "All Tasks" -->
     <div class="task-toggle">
-        <button onclick="toggleTaskView('my-tasks')">📌 My Tasks</button> 
-        <button onclick="toggleTaskView('all-tasks')">📂 All Tasks</button> 
+        <button data-view="my-tasks" onclick="toggleTaskView('my-tasks')">📌 My Tasks</button> 
+        <button data-view="all-tasks" onclick="toggleTaskView('all-tasks')">📂 All Tasks</button> 
     </div>
     
     <!-- Filter and search section -->
@@ -103,6 +107,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Supervisor') {
     </div>
 
     <div id="task-details" class="hidden">
+        <input type="hidden" id="task-id">
+        
         <button class="back-button" onclick="goBack()">⬅ Back to Tasks</button>
 
         <h2 id="task-title"></h2>
@@ -134,11 +140,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Supervisor') {
         <input type="file" id="file-upload">
         <button onclick="uploadFile()">Upload File</button>
 
+        <h3>Comments</h3>
+        <ul id="comment-list"></ul>
+
         <h3>Running Log</h3>
         <ul id="task-log"></ul>
     </div>
-
-
 
 
     <!-- JavaScript file to handle dynamic functionality like task fetching, filtering, and displaying details -->
