@@ -96,6 +96,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
 
     <!-- Task details section (hidden by default - opened on click of view details button) -->
     <div id="task-details" class="hidden">
+        <input type="hidden" id="task-id">
+
         <!-- Button to navigate back to the task list -->
         <button class="back-button" onclick="goBack()">⬅ Back to Tasks</button>
 
@@ -106,12 +108,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
         <p><strong>Created:</strong> <span id="task-created"></span></p>
         <p><strong>Deadline:</strong> <span id="task-deadline"></span></p>
 
-        <!-- Primary Assigned User (will chhange this to supervisor later, once code and data is updated) -->
-        <h3>Primary Assigned User</h3>
+        <!-- Primary Assigned User -->
+        <h3>Created By: </h3>
         <p id="primary-assigned-user">None</p>
 
         <!-- Additional Assigned Users -->
-        <h3>Additional Assigned Users</h3>
+        <h3>Additionally Assigned Users: </h3>
         <ul id="additional-users-list"></ul>
 
         <!-- Section for task actions -->
@@ -134,6 +136,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
         <h3>Upload Files</h3>
         <input type="file" id="file-upload">
         <button onclick="uploadFile()">Upload File</button>
+
+        <!-- Comment log of task-related comments -->
+        <h3>Comments</h3>
+        <ul id="comment-list"></ul>
 
         <!-- Running log of task-related updates -->
         <h3>Running Log</h3>
