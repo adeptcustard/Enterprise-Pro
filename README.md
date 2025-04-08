@@ -15,10 +15,15 @@ This project is a **web-based workflow management system** designed for the **Yo
 - **Data Export:** Export tasks in **CSV** or **PDF** format.
 - **Custom Fields:** Add new task data fields for future flexibility.
 - **Search Function:** Quickly find tasks via search.
-- **Authentication:** Secure login using **OAuth or similar methods**.
+- **Authentication:** Secure login using **One-Time Password**.
 
 ## Installation & Setup (To Be Added)
-_TBD - Will include setup instructions once development progresses._
+- **Download Files:** Download raw files from releases page.
+- **Download Dependencies:** Download PostgreSQL.
+- **?:** .
+- **?:** .
+- **?:** .
+- **?:** .
 
 ## Tech Stack (Planned)
 - **Frontend:** (TBD)
@@ -28,10 +33,7 @@ _TBD - Will include setup instructions once development progresses._
 - **Email Service:** PHPMailer
 
 ## Contribution Guidelines
-_TBD - Will include guidelines once team workflow is established._
-
-## License
-_TBD - Will assign appropriate open-source or proprietary license._
+- **Follow Gantt Chart for contribution guidelines.**
 
 ---
 
