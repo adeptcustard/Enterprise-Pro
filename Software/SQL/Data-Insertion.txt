@@ -2,6 +2,9 @@
 functioning correctly.
 
 - Make sure this exists for inserting data manually using sql
+
+---------------------------------------------Copy From After This Line -----------------------------------------------------
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES
