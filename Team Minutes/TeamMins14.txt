@@ -1,0 +1,16 @@
+Meeting 13: \
+Week 11 of Project. \
+Host: Yaqoob Muhammad \
+Participants: Awais Hussain, Naqib Rehman, Saleh Aldarhani, Haris Kadu, Filza Tahir, Mohammad Ismail\
+NO ABSENTEES \
+\
+14:00-16:00 | 01/04/2025\
+\
+Manual tests have been created for the php. \
+CSS files has been abstracted and has no repetition. \
+Inspection document is in process by the respective individuals. \
+\
+Plan for Next Week: \
+Finish php tetsing by next week by the respective individuals. \
+Finish documentation and inspection files. \
+Finish uploading remaining source files. }
