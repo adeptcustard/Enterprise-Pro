@@ -1,3 +1,14 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('User', 'Supervisor', 'Admin')) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    must_change_password BOOLEAN DEFAULT TRUE
+);
+
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -44,42 +55,12 @@ CREATE TABLE task_files (
     uploaded_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE vehicles (
+CREATE TABLE task_log (
     id SERIAL PRIMARY KEY,
-    make VARCHAR(100) NOT NULL,
-    model VARCHAR(100) NOT NULL,
-    mileage INT DEFAULT 0,
-    licence_plate VARCHAR(50) UNIQUE NOT NULL,
-    vin VARCHAR(50) UNIQUE NOT NULL,
-    comment_log TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE vehicle_todo (
-    id SERIAL PRIMARY KEY,
-    vehicle_id INT REFERENCES vehicles(id) ON DELETE CASCADE,
-    task_description TEXT NOT NULL,
-    completed BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE vehicle_files (
-    id SERIAL PRIMARY KEY,
-    vehicle_id INT REFERENCES vehicles(id) ON DELETE CASCADE,
-    file_name VARCHAR(255) NOT NULL,
-    file_path TEXT NOT NULL,
-    uploaded_by INT REFERENCES users(id) ON DELETE SET NULL,
-    uploaded_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE vehicle_bookings (
-    id SERIAL PRIMARY KEY,
-    vehicle_id INT REFERENCES vehicles(id) ON DELETE CASCADE,
-    booked_by INT REFERENCES users(id) ON DELETE SET NULL,
-    booking_start TIMESTAMP NOT NULL,
-    booking_end TIMESTAMP NOT NULL,
-    status VARCHAR(20) CHECK (status IN ('Booked', 'Checked Out', 'Returned', 'Cancelled')) NOT NULL DEFAULT 'Booked',
-    created_at TIMESTAMP DEFAULT NOW()
+    task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE SET NULL,
+    action TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE help_requests (
@@ -100,4 +81,7 @@ CREATE TABLE help_responses (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-
+ALTER TABLE users ADD COLUMN dark_mode BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN dyslexic_mode BOOLEAN DEFAULT FALSE
+ALTER TABLE tasks
+ADD COLUMN priority VARCHAR(20) DEFAULT 'Low';

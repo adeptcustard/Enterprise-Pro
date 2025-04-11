@@ -1,198 +1,298 @@
-//wait for the DOM to be fully loaded before running the script
-document.addEventListener("DOMContentLoaded", function () {
-     //log confirmation of script load
+/**
+ * Show a toast-style popup notification to the user.
+ * 
+ * @param {string} message - The message to display in the toast.
+ * @param {string} [type="success"] - The type of toast ("success" or "error").
+ */
+function showToast(message, type = "success") {
+    //get the toast element from the DOM
+    const toast = document.getElementById("toast");
+    //exit if the toast container is not found
+    if (!toast) return;
+    //set toast class to apply appropriate styles
+    toast.className = `toast ${type}`;
+    //set the toast message text
+    toast.innerText = message;
+    //make toast visible
+    toast.classList.remove("hidden");
+
+    //add animation class after a brief delay for transition
+    setTimeout(() => {
+        toast.classList.add("show");
+    }, 10);
+
+    //hide the toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => {
+            //fully hide the toast after animation
+            toast.classList.add("hidden");
+        }, 300);
+    }, 3000);
+}
+
+//wait for the entire page to load before executing logic
+document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ users_admin.js loaded!");
-    //fetch and display the list of users
-    fetchUsers(); 
+    //load all users from the database
+    fetchUsers();
+
+    //setup collapsible sections
+    document.querySelectorAll(".collapsible").forEach(btn => {
+        btn.addEventListener("click", function () {
+            this.classList.toggle("active"); // Toggle active styling
+            const content = this.nextElementSibling;
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        });
+    });
+
+    //search filter for existing user list
+    document.getElementById("search-existing-users").addEventListener("input", function () {
+        const search = this.value.toLowerCase();
+        const users = document.querySelectorAll("#users-list li");
+        users.forEach(user => {
+            user.style.display = user.textContent.toLowerCase().includes(search) ? "flex" : "none";
+        });
+    });
+
+    //search filter for password change section
+    document.getElementById("search-users-change-pass").addEventListener("input", function () {
+        const search = this.value.toLowerCase();
+        const users = document.querySelectorAll("#password-user-list-container button");
+        users.forEach(user => {
+            user.style.display = user.textContent.toLowerCase().includes(search) ? "flex" : "none";
+        });
+    });
+
+    //search filter for role change section
+    document.getElementById("search-users-change-role").addEventListener("input", function () {
+        const search = this.value.toLowerCase();
+        const users = document.querySelectorAll("#role-user-list-container button");
+        users.forEach(user => {
+            user.style.display = user.textContent.toLowerCase().includes(search) ? "flex" : "none";
+        });
+    });
 });
 
-//function to fetch users from the server and display them - populate dropdowns for password and role changes
+/**
+ * Fetch users from the server and populate all 3 sections:
+ * - View users
+ * - Change password
+ * - Change role
+ */
 async function fetchUsers() {
     try {
-        //send a request to fetch users
         const response = await fetch("../php/fetch_users.php");
         const data = await response.json();
 
-        //get references to the HTML elements for displaying users
         const usersList = document.getElementById("users-list");
-        const passwordUserSelect = document.getElementById("password-user-select");
-        const roleUserSelect = document.getElementById("role-user-select");
+        const passwordListContainer = document.getElementById("password-user-list-container");
+        const roleListContainer = document.getElementById("role-user-list-container");
 
-        //clear existing content in the lists
+        if (!usersList || !passwordListContainer || !roleListContainer) {
+            console.error("❌ Required container not found in DOM.");
+            return;
+        }
+
+        //clear existing user entries
         usersList.innerHTML = "";
-        passwordUserSelect.innerHTML = '<input type="text" id="search-password-user" placeholder="Search user...">';
-        roleUserSelect.innerHTML = '<input type="text" id="search-role-user" placeholder="Search user...">';
+        passwordListContainer.innerHTML = "";
+        roleListContainer.innerHTML = "";
 
-        //check if the request was successful and users are available
         if (data.success) {
             data.users.forEach(user => {
-                //create a list item for each user
+                const userDisplay = `${user.first_name} ${user.last_name} (${user.email})`;
+
+                //display in Users list
                 const li = document.createElement("li");
+                li.className = "user-list-item";
                 li.innerHTML = `
-                    ${user.first_name} ${user.last_name} (${user.email}) - Role: ${user.role}
-                    <button onclick="deleteUser(${user.id})">❌ Delete</button>
+                    ${userDisplay} - ${user.role}
+                    <button class="delete-btn" onclick="deleteUser(${user.id})">❌</button>
                 `;
-                //add the user to the list
-                usersList.appendChild(li); 
+                usersList.appendChild(li);
 
-                //populate the dropdowns for changing password and role
-                const option1 = document.createElement("option");
-                option1.value = user.id;
-                option1.text = `${user.first_name} ${user.last_name} (${user.email})`;
-                passwordUserSelect.appendChild(option1);
+                //add to Password section
+                const pwBtn = document.createElement("button");
+                pwBtn.textContent = userDisplay;
+                pwBtn.className = "user-select-btn";
+                pwBtn.onclick = () => {
+                    document.getElementById("password-selected-name").textContent = userDisplay;
+                    document.getElementById("password-form").style.display = "block";
+                    window.selectedPasswordUserId = user.id;
+                    passwordListContainer.style.display = "none";
+                    document.getElementById("search-users-change-pass").style.display = "none";
+                    document.getElementById("pass-br").style.display = "none";
+                };
+                passwordListContainer.appendChild(pwBtn);
 
-                //clone the option for role selection
-                const option2 = option1.cloneNode(true); 
-                roleUserSelect.appendChild(option2);
+                //add to Role section
+                const roleBtn = document.createElement("button");
+                roleBtn.textContent = userDisplay;
+                roleBtn.className = "user-select-btn";
+                roleBtn.onclick = () => {
+                    document.getElementById("role-selected-name").textContent = userDisplay;
+                    document.getElementById("role-form").style.display = "block";
+                    window.selectedRoleUserId = user.id;
+                    roleListContainer.style.display = "none";
+                    document.getElementById("search-users-change-role").style.display = "none";
+                    document.getElementById("role-br").style.display = "none";
+                };
+                roleListContainer.appendChild(roleBtn);
             });
-
-            //enable search filtering on dropdowns
-            enableSearchFilter("search-password-user", passwordUserSelect);
-            enableSearchFilter("search-role-user", roleUserSelect);
-
-        } 
-        else {
-            //display a message if no users are found
-            usersList.innerHTML = "<p>No users found.</p>";
         }
-    } 
+        else {
+            usersList.innerHTML = "<li>No users found.</li>";
+        }
+    }
     catch (error) {
-        //log error in case of failure
-        console.error("❌ Error fetching users:", error); 
+        console.error("❌ Failed to fetch users:", error);
     }
 }
 
-//search filter function for dropdowns
-function enableSearchFilter(searchInputId, dropdown){
-    document.getElementById(searchInputId).addEventListener("input", function () {
-        const searchText = this.value.toLowerCase();
-        for (const option of dropdown.options) {
-            if (option.text.toLowerCase().includes(searchText)) {
-                option.style.display = "block";
-            } 
-            else {
-                option.style.display = "none";
-            }
-        }
-    });
-}
-
-//function to add a new user
+/**
+ * Adds a new user by sending form data to server
+ */
 async function addUser() {
-    //get values from input fields
+    const firstName = document.getElementById("user-first-name").value;
+    const lastName = document.getElementById("user-last-name").value;
     const email = document.getElementById("user-email").value;
     const password = document.getElementById("user-password").value;
     const role = document.getElementById("user-role").value;
 
-    //ensure email and password fields are filled
-    if (!email || !password) {
-        alert("Email and password are required.");
+    if (!firstName || !lastName || !email || !password) {
+        showToast("All fields are required.", "error");
         return;
     }
 
     try {
-        //send a request to add a new user
-        const response = await fetch("../php/add_user.php", {
+        const res = await fetch("../php/add_user.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password, role })
+            body: JSON.stringify({ first_name: firstName, last_name: lastName, email, password, role })
         });
 
-        const data = await response.json();
-
-        //if user is successfully added, refresh the user list
+        const data = await res.json();
         if (data.success) {
+            showToast("✅ User added successfully!", "success");
             fetchUsers();
-        } 
-        else {
-            //show an error message
-            alert("Error: " + data.message); 
         }
-    } catch (error) {
-        //log error in case of failure
-        console.error("❌ Error adding user:", error); 
+        else {
+            showToast(data.message || "Failed to add user.", "error");
+        }
+    }
+    catch (err) {
+        console.error("❌ Error adding user:", err);
+        showToast("❌ Error adding user.", "error");
     }
 }
 
-//function to delete a user
+/**
+ * Deletes a user by ID after confirmation
+ * @param {number} userId - ID of the user to delete
+ */
 async function deleteUser(userId) {
-    //confirm before proceeding with deletion
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-        //send a request to delete the user
-        const response = await fetch(`../php/delete_user.php?user_id=${userId}`, { method: "DELETE" });
-        const data = await response.json();
+        const res = await fetch("../php/delete_user.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+        });
 
-        //if deletion is successful, refresh the user list
+        const data = await res.json();
         if (data.success) {
+            showToast("🗑️ User deleted successfully", "success");
             fetchUsers();
-        } 
-        else {
-            //show an error message
-            alert("Error: " + data.message); 
         }
-    } catch (error) {
-        //log error in case of failure
-        console.error("❌ Error deleting user:", error); 
+        else {
+            showToast(data.message, "error");
+        }
+    }
+    catch (err) {
+        console.error("❌ Error deleting user:", err);
+        showToast("❌ Failed to delete user.", "error");
     }
 }
 
-//function to change a user's password
+/**
+ * Changes password of the selected user
+ */
 async function changePassword() {
-    //get selected user ID and new password from input fields
-    const userId = document.getElementById("password-user-select").value;
-    const newPassword = document.getElementById("new-password").value;
+    const userId = window.selectedPasswordUserId;
+    const newPassword = document.getElementById("new-password").value.trim();
 
-    //ensure a new password is entered
     if (!newPassword) {
-        alert("New password is required.");
+        showToast("⚠️ New password is required.", "error");
+        return;
+    }
+
+    //validate password with strong rules
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if (!passwordPattern.test(newPassword)) {
+        showToast("⚠️ Password must be at least 8 characters and contain uppercase, lowercase, number, and special character.", "error");
         return;
     }
 
     try {
-        //send a request to update the user's password
-        const response = await fetch("../php/change_password.php", {
+        const res = await fetch("../php/change_users_password.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, newPassword })
+            body: JSON.stringify({ user_id: userId, new_password: newPassword })
         });
 
-        const data = await response.json();
+        const data = await res.json();
+        showToast(data.message, data.success ? "success" : "error");
 
-        //show success or error message
-        alert(data.message); 
-    } 
-    catch (error) {
-        //log error in case of failure
-        console.error("❌ Error changing password:", error); 
+        if (data.success) resetPasswordSelection();
+    }
+    catch (err) {
+        console.error("❌ Error changing password:", err);
+        showToast("❌ Failed to change password.", "error");
     }
 }
 
-//function to change a user's role
+/**
+ * Changes role of the selected user
+ */
 async function changeUserRole() {
-    //get selected user ID and new role from input fields
-    const userId = document.getElementById("role-user-select").value;
-    const newRole = document.getElementById("new-role").value;
+    const user_id = window.selectedRoleUserId;
+    const new_role = document.getElementById("new-role").value;
 
     try {
-        //send a request to update the user's role
-        const response = await fetch("../php/change_role.php", {
+        const res = await fetch("../php/change_user_role.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, newRole })
+            body: JSON.stringify({ user_id, new_role })
         });
-
-        const data = await response.json();
-
-        //show success or error message
-        alert(data.message); 
-
-        //refresh the user list after role update
-        fetchUsers(); 
-    } 
-    catch (error) {
-        //log error in case of failure
-        console.error("❌ Error changing role:", error); 
+        const data = await res.json();
+        showToast(data.message, data.success ? "success" : "error");
+        fetchUsers();
+        resetRoleSelection();
     }
+    catch (err) {
+        console.error("❌ Error changing role:", err);
+        showToast("❌ Failed to change role.", "error");
+    }
+}
+
+/**
+ * Reset UI after password change is complete
+ */
+function resetPasswordSelection() {
+    document.getElementById("password-form").style.display = "none";
+    document.getElementById("password-user-list-container").style.display = "block";
+    document.getElementById("search-users-change-pass").style.display = "block";
+    document.getElementById("pass-br").style.display = "block";
+}
+
+/**
+ * Reset UI after role change is complete
+ */
+function resetRoleSelection() {
+    document.getElementById("role-form").style.display = "none";
+    document.getElementById("role-user-list-container").style.display = "block";
+    document.getElementById("search-users-change-role").style.display = "block";
+    document.getElementById("role-br").style.display = "block";
 }

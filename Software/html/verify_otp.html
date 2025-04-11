@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--sets character encoding to utf-8 to support all character types-->
+  <meta charset="UTF-8" />
+
+  <!--ensures proper scaling and rendering on different screen sizes-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!--sets the page title shown in the browser tab-->
+  <title>Verify OTP | YHROCU</title>
+
+  <!--links the external css file used to style the otp verification page-->
+  <link rel="stylesheet" href="../css/verify_otp.css">
+</head>
+<body>
+
+  <!--main container that wraps the otp verification elements-->
+  <div class="container">
+
+    <!--heading indicating the user must verify their identity-->
+    <h2>🔒 Verify Your Identity</h2>
+
+    <!--instruction prompting the user to check their email for the otp-->
+    <p>Please check your email for a One-Time Passcode (OTP).</p>
+
+    <!--input field for entering the otp received via email-->
+    <input type="text" id="otp" placeholder="Enter OTP" />
+
+    <!--error display container for invalid otp input or server errors-->
+    <div id="otp-error"></div>
+
+    <!--button to trigger otp verification function in javascript-->
+    <button onclick="verifyOTP()">Verify</button>
+  </div>
+
+  <!--toast message box for temporary feedback messages-->
+  <div id="toast" class="toast hidden"></div>
+
+  <!--loads the external javascript file that handles otp verification logic-->
+  <script src="../javascript/verify_otp.js"></script>
+
+</body>
+</html>

@@ -1,93 +1,82 @@
 <?php
-//start the session to track user authentication
+//start session to access user session data
 session_start();
 
 //include database connection
-require_once "db_connect.php"; 
+require_once "db_connect.php";
 
-//set the response header to return JSON data
+//set content type to JSON for API response
 header("Content-Type: application/json");
 
-//check if the user is an admin; if not, return an unauthorized response
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+//this block ensures only Admins and Supervisors can access this endpoint
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['Admin', 'Supervisor'])) {
     echo json_encode(["success" => false, "message" => "Unauthorized"]);
     exit;
 }
 
-try {    
-    //fetch all tasks with their primary assigned user details
+try {
+    //fetch all tasks and join primary assigned user (from 'assigned_to' field)
     $stmt = $pdo->prepare("
-        SELECT t.id, t.title, t.description, t.status, t.deadline, t.created_at, 
-               u.id AS primary_user_id, u.first_name AS primary_first_name, u.last_name AS primary_last_name, u.email AS primary_email
+        SELECT 
+            t.id, t.title, t.description, t.status, t.deadline, t.created_at,
+            u.id AS primary_user_id, u.first_name AS primary_first_name, 
+            u.last_name AS primary_last_name, u.email AS primary_email,
+            COALESCE(SUM(CASE WHEN ta.completed = TRUE THEN 1 ELSE 0 END), 0) AS completed_actions,
+            COALESCE(COUNT(ta.id), 0) AS total_actions
         FROM tasks t
-        LEFT JOIN users u ON t.assigned_to = u.id  -- Join to get the primary assigned user's details
-        ORDER BY t.created_at DESC  -- Sort tasks by creation date in descending order
+        LEFT JOIN users u ON t.assigned_to = u.id --join primary assigned user
+        LEFT JOIN task_actions ta ON t.id = ta.task_id --join task actions to compute totals
+        GROUP BY t.id, u.id --group by task and user to allow aggregates
+        ORDER BY t.created_at DESC
     ");
-    
-    //execute the query
     $stmt->execute();
-    //fetch all tasks as an associative array
+
+    //fetch all task rows with joined user data
     $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    //fetch all task actions associated with tasks
+    //fetch all additional users assigned to tasks from the task_assignments table
+    $stmt_assignments = $pdo->prepare("
+        SELECT ta.task_id, u.id, u.first_name, u.last_name, u.email, u.role
+        FROM task_assignments ta
+        JOIN users u ON ta.user_id = u.id
+    ");
+    $stmt_assignments->execute();
+    $assignments = $stmt_assignments->fetchAll(PDO::FETCH_ASSOC);
+
+    //fetch all actions for all tasks from task_actions table
     $stmt_actions = $pdo->prepare("
         SELECT id, task_id, action_description, completed, created_at
         FROM task_actions
     ");
-    
-    //execute the query
     $stmt_actions->execute();
-    //fetch all task actions as an associative array
     $actions = $stmt_actions->fetchAll(PDO::FETCH_ASSOC);
 
-    //fetch additional assigned users from the `task_assignments` table
-    $stmt_assignments = $pdo->prepare("
-        SELECT ta.task_id, u.id AS user_id, u.first_name, u.last_name, u.email
-        FROM task_assignments ta
-        JOIN users u ON ta.user_id = u.id
-    ");
-    
-    //execute the query
-    $stmt_assignments->execute();
-    // Fetch all additional task assignments as an associative array
-    $assignments = $stmt_assignments->fetchAll(PDO::FETCH_ASSOC);
-
-    //attach actions and additional assigned users to their respective tasks
+    //loop through each task and attach related user and action info
     foreach ($tasks as &$task) {
-        //filter and attach actions that belong to the current task
-        $task['actions'] = array_values(array_filter($actions, fn($action) => $action['task_id'] == $task['id']));
+        //attach the primary assigned user if present
+        $task['primary_user'] = $task['primary_user_id'] ? [
+            "id" => $task['primary_user_id'],
+            "first_name" => $task['primary_first_name'],
+            "last_name" => $task['primary_last_name'],
+            "email" => $task['primary_email']
+        ] : null;
 
-        //filter and attach additional users assigned to the current task
-        $task['additional_users'] = array_values(array_filter($assignments, fn($assign) => $assign['task_id'] == $task['id']));
+        //attach additional users by filtering assignments based on task ID
+        $task['additional_users'] = array_values(array_filter($assignments, fn($a) => $a['task_id'] == $task['id']));
 
-        //include primary assigned user details from `tasks` table
-        if ($task['primary_user_id']) {
-            $task['primary_user'] = [
-                "id" => $task['primary_user_id'],
-                "first_name" => $task['primary_first_name'],
-                "last_name" => $task['primary_last_name'],
-                "email" => $task['primary_email']
-            ];
-        } 
-        else {
-            //set primary user as null if no primary user is assigned
-            $task['primary_user'] = null;
-        }
+        //attach task actions by filtering all actions based on task ID
+        $task['actions'] = array_values(array_filter($actions, fn($a) => $a['task_id'] == $task['id']));
 
-        //ensure `additional_users` always exists as an array even if empty
-        if (!isset($task['additional_users']) || empty($task['additional_users'])) {
-            $task['additional_users'] = [];
-        }
-
-        //remove unnecessary fields from the final output
+        //remove unstructured user columns after restructuring data
         unset($task['primary_user_id'], $task['primary_first_name'], $task['primary_last_name'], $task['primary_email']);
     }
 
-    //return the tasks data as a JSON response
+    //return all structured task data as JSON
     echo json_encode(["success" => true, "tasks" => $tasks]);
-} 
+
+}
 catch (PDOException $e) {
-    // Handle database errors and return an error response
+    //catch and return database error
     echo json_encode(["success" => false, "message" => "Database error: " . $e->getMessage()]);
 }
 ?>
