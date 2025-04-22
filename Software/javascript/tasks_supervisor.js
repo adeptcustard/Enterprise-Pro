@@ -1,8 +1,10 @@
-//wait until the DOM (HTML document) is fully loaded before executing the script
+/**
+ * Wait until the DOM is fully loaded before executing any code.
+ */
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ tasks_supervisor.js loaded!");
 
-    //select necessary elements from the DOM
+    //DOM elements
     const taskList = document.getElementById("task-list");
     const taskDetails = document.getElementById("task-details");
     const filterContainer = document.getElementById("filter-container");
@@ -12,27 +14,40 @@ document.addEventListener("DOMContentLoaded", function () {
     const taskActionsList = document.getElementById("task-actions-list");
     const toggleButtons = document.querySelectorAll(".task-toggle button");
 
+    //store user's tasks and all tasks
     let myTasks = [];
     let allTasks = [];
 
-    //default view 
+    //track which view is active ("my-tasks" or "all-tasks")
     let currentView = "my-tasks";
 
-    //function to format date and time in DD/MM/YYYY HH:MM format
+    /**
+     * Format a datetime string into DD/MM/YYYY HH:MM format
+     * @param {string} dateString - ISO datetime string
+     * @returns {string} - Formatted date string
+     */
     function formatDateTime(dateString) {
         if (!dateString || dateString === "null") return "N/A";
-
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
         const hours = String(date.getHours()).padStart(2, "0");
         const minutes = String(date.getMinutes()).padStart(2, "0");
-
         return `${day}/${month}/${year} ${hours}:${minutes}`;
     }
 
-    //fetch tasks from the server
+    /**
+     * Show or hide the task status info table
+     */
+    window.toggleStatusTable = function () {
+        const table = document.getElementById("status-info");
+        table.classList.toggle("hidden");
+    };
+
+    /**
+     * Fetch tasks from the server for both views
+     */
     async function fetchTasks() {
         try {
             const response = await fetch("../php/fetch_supervisor_tasks.php");
@@ -44,18 +59,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 myTasks = data.my_tasks;
                 allTasks = data.all_tasks;
                 displayTasks(currentView === "my-tasks" ? myTasks : allTasks);
-            }
-            else {
+            } else {
                 taskList.innerHTML = `<p class="error">${data.message}</p>`;
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error("❌ Error fetching tasks:", error);
             taskList.innerHTML = `<p class="error">Failed to load tasks. Please try again.</p>`;
         }
     }
 
-    //function to display tasks dynamically
+    /**
+     * Render a list of tasks into the task list
+     * @param {Array} tasks - Array of task objects
+     */
     function displayTasks(tasks) {
         taskList.innerHTML = "";
         taskDetails.style.display = "none";
@@ -67,23 +83,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         tasks.forEach(task => {
             const li = document.createElement("li");
+            li.classList.add("task-card");
 
             const primaryUser = task.primary_user
                 ? `${task.primary_user.first_name} ${task.primary_user.last_name} (${task.primary_user.email})`
                 : "None";
 
-            const additionalUsers = task.assigned_users && task.assigned_users.length > 0
-                ? task.assigned_users.map(user =>
-                    `${user.first_name} ${user.last_name} (${user.email})`
-                ).join(", ")
+            const additionalUsers = task.assigned_users?.length
+                ? task.assigned_users.map(user => `${user.first_name} ${user.last_name} (${user.email})`).join(", ")
                 : "None";
 
             li.innerHTML = `
                 <strong>${task.title}</strong>
                 <p>Status: ${task.status}</p>
                 <p>Created: ${formatDateTime(task.created_at)} | Deadline: ${formatDateTime(task.deadline)}</p>
-                <p><strong>Primary User:</strong> ${primaryUser}</p>
-                <p><strong>Additional Users:</strong> ${additionalUsers}</p>
+                <p><strong>Created By:</strong> ${primaryUser}</p>
+                <p><strong>Additionally Assigned Users:</strong> ${additionalUsers}</p>
                 <p>Actions: ${task.completed_actions}/${task.total_actions} completed</p>
                 <button onclick="openTask(${task.id}, '${currentView}')">View Details</button>
             `;
@@ -91,122 +106,69 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    //function to search tasks based on user input
+    /**
+     * Search through tasks by title based on current view
+     */
     window.searchTasks = function () {
-        if (currentView === "my-tasks") {
-            const searchText = searchBar.value.toLowerCase();
-            const filteredTasks = myTasks.filter(task => task.title.toLowerCase().includes(searchText));
-            displayTasks(filteredTasks);
-        }
-        else {
-            const searchText = searchBar.value.toLowerCase();
-            const filteredTasks = allTasks.filter(task => task.title.toLowerCase().includes(searchText));
-            displayTasks(filteredTasks);
-        }
+        const searchText = searchBar.value.toLowerCase();
+        const source = currentView === "my-tasks" ? myTasks : allTasks;
+        const filtered = source.filter(task => task.title.toLowerCase().includes(searchText));
+        displayTasks(filtered);
     };
 
-    //function to filter tasks based on status, creation date, and deadline
+    /**
+     * Filter tasks by status, creation date, and deadline
+     */
     window.filterTasks = function () {
-        //check if the view type is for myTasks or allTasks
-        if (currentView === "my-tasks") {
-            let filteredTasks = [...myTasks];
+        const source = currentView === "my-tasks" ? [...myTasks] : [...allTasks];
 
-            const statusFilter = document.getElementById("filter-status").value;
-            if (statusFilter) {
-                filteredTasks = filteredTasks.filter(task => task.status === statusFilter);
-            }
+        const status = document.getElementById("filter-status").value;
+        const createdSort = document.getElementById("sort-created").value;
+        const deadlineSort = document.getElementById("sort-deadline").value;
 
-            const sortCreated = document.getElementById("sort-created").value;
-            if (sortCreated === "newest") {
-                filteredTasks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            }
-            else if (sortCreated === "oldest") {
-                filteredTasks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-            }
+        let filtered = source;
 
-            const sortDeadline = document.getElementById("sort-deadline").value;
-            if (sortDeadline === "soonest") {
-                filteredTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-            }
-            else if (sortDeadline === "latest") {
-                filteredTasks.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
-            }
-
-            displayTasks(filteredTasks);
-        }
-        else {
-            let filteredTasks = [...allTasks];
-
-            const statusFilter = document.getElementById("filter-status").value;
-            if (statusFilter) {
-                filteredTasks = filteredTasks.filter(task => task.status === statusFilter);
-            }
-
-            const sortCreated = document.getElementById("sort-created").value;
-            if (sortCreated === "newest") {
-                filteredTasks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            }
-            else if (sortCreated === "oldest") {
-                filteredTasks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-            }
-
-            const sortDeadline = document.getElementById("sort-deadline").value;
-            if (sortDeadline === "soonest") {
-                filteredTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-            }
-            else if (sortDeadline === "latest") {
-                filteredTasks.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
-            }
-
-            displayTasks(filteredTasks);
+        if (status) {
+            filtered = filtered.filter(task => task.status === status);
         }
 
+        if (createdSort === "newest") {
+            filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        } else if (createdSort === "oldest") {
+            filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        }
 
+        if (deadlineSort === "soonest") {
+            filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+        } else if (deadlineSort === "latest") {
+            filtered.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+        }
+
+        displayTasks(filtered);
     };
 
-    //function to clear all applied filters
+    /**
+     * Clear all filters and reset task list
+     */
     window.clearFilters = function () {
-        console.log("✅ Filters cleared!");
-
         document.getElementById("filter-status").value = "";
         document.getElementById("sort-created").value = "newest";
         document.getElementById("sort-deadline").value = "soonest";
-
         searchBar.value = "";
 
-        if (currentView === "my-tasks") {
-            displayTasks(myTasks);
-        }
-        else {
-            displayTasks(allTasks);
-        }
+        displayTasks(currentView === "my-tasks" ? myTasks : allTasks);
     };
 
-    //function to open a selected task and display its details
+    /**
+     * Opens a task and displays detailed info
+     * @param {number} taskId
+     * @param {string} viewType - View context ("my-tasks" or "all-tasks")
+     */
     window.openTask = function (taskId, viewType) {
-        console.log("🔍 Opening Task ID:", taskId);
-
-        //ensure taskId is an integer
         taskId = parseInt(taskId, 10);
         const task = (viewType === "my-tasks" ? myTasks : allTasks).find(t => parseInt(t.id, 10) === taskId);
+        if (!task) return showToast("❌ Task not found", "error");
 
-        //(debugging)
-        if (!task) {
-            console.error("❌ Task not found:", taskId);
-            return;
-        }
-
-        //store Task ID in the hidden input field
-        const taskIdField = document.getElementById("task-id");
-        if (taskIdField) {
-            taskIdField.value = task.id;
-        }
-        else {
-            console.error("❌ Error: task-id field not found in the DOM!");
-            return;
-        }
-
-        //update task details section
         document.getElementById("task-id").value = task.id;
         document.getElementById("task-title").innerText = task.title;
         document.getElementById("task-description").innerText = task.description;
@@ -215,67 +177,48 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("task-deadline").innerText = formatDateTime(task.deadline);
         document.getElementById("task-actions").innerText = `${task.completed_actions ?? 0}/${task.total_actions ?? 0} completed`;
 
-        //update progress bar
-        const progressPercentage = task.total_actions > 0 ? (task.completed_actions / task.total_actions) * 100 : 0;
-        document.getElementById("task-progress").style.width = `${progressPercentage}%`;
+        const progress = task.total_actions > 0 ? (task.completed_actions / task.total_actions) * 100 : 0;
+        document.getElementById("task-progress").style.width = `${progress}%`;
 
         fetchTaskLog(task.id);
+        loadFiles(task.id);
 
-        const primaryAssignedUser = document.getElementById("primary-assigned-user");
-
-        //display Primary Assigned User
-        if (task.primary_user) {
-            primaryAssignedUser.innerHTML = `${task.primary_user.first_name} ${task.primary_user.last_name} (${task.primary_user.email})`;
-        }
-        else {
-            primaryAssignedUser.innerHTML = "None";
-        }
+        document.getElementById("primary-assigned-user").innerText = task.primary_user
+            ? `${task.primary_user.first_name} ${task.primary_user.last_name} (${task.primary_user.email})`
+            : "None";
 
         const additionalUsersList = document.getElementById("additional-users-list");
+        additionalUsersList.innerHTML = task.assigned_users?.length
+            ? task.assigned_users.map(u => `<li>${u.first_name} ${u.last_name} (${u.email})</li>`).join("")
+            : "<p>No additional users assigned to this task.</p>";
 
-        //display Additional Assigned Users
-        additionalUsersList.innerHTML = "";
-
-        if (!task.additional_users || task.additional_users.length === 0) {
-            additionalUsersList.innerHTML = "<p>No additional users assigned to this task.</p>";
-        }
-        else {
-            task.additional_users.forEach(user => {
-                additionalUsersList.innerHTML += `<li>${user.first_name} ${user.last_name} (${user.email})</li>`;
-            });
-        }
-
-        //display task actions
-        taskActionsList.innerHTML = "";
-        if (!Array.isArray(task.actions) || task.actions.length === 0) {
-            taskActionsList.innerHTML = "<p>No actions available for this task.</p>";
-        }
-        else {
-            task.actions.forEach(action => {
-                const actionItem = document.createElement("li");
-                actionItem.innerHTML = `
+        taskActionsList.innerHTML = task.actions?.length
+            ? task.actions.map(action => `
+                <li class="task-action-item">
                     ${action.action_description} - 
                     <button onclick="toggleActionCompletion(${action.id})">
                         ${action.completed ? "✅ Completed" : "❌ Not Completed"}
                     </button>
-                `;
-                taskActionsList.appendChild(actionItem);
-            });
-        }
+                </li>`).join("")
+            : "<p>No actions available for this task.</p>";
 
+        //hide list and show details view
+        document.getElementById("current-view-label").style.display = "none";
+        document.getElementById("task-toggle").style.display = "none";
         taskList.style.display = "none";
         filterContainer.style.display = "none";
-        userHeader.style.display = "none";
+        userHeader.style.display = "block";
         taskDetails.style.display = "block";
     };
 
-    //function to get task log and running log and dynamically create them onto webpage
+    /**
+     * Fetch comments and log history for a task
+     * @param {number} taskId
+     */
     async function fetchTaskLog(taskId) {
         try {
             const response = await fetch(`../php/fetch_task_log.php?task_id=${taskId}`);
             const data = await response.json();
-
-            console.log("📜 Running Log Data:", data);
 
             if (data.success) {
                 displayComments(data.comments);
@@ -284,102 +227,231 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("task-log").innerHTML = `<p>${data.message}</p>`;
             }
         } catch (error) {
-            console.error("❌ Error fetching task log:", error);
             document.getElementById("task-log").innerHTML = "<p>Failed to load task log.</p>";
         }
     }
 
-    //display comments
+    /**
+     * Display comments
+     * @param {Array} comments - Comment entries
+     */
     function displayComments(comments) {
-        const commentsList = document.getElementById("comment-list");
-        commentsList.innerHTML = comments.length
+        const list = document.getElementById("comment-list");
+        list.innerHTML = comments.length
             ? comments.map(c => `<li><strong>${c.first_name} ${c.last_name}:</strong> ${c.comment} <small>(${formatDateTime(c.created_at)})</small></li>`).join("")
             : "<p>No comments yet.</p>";
     }
 
-    //display running log
+    /**
+     * Display running log entries
+     * @param {Array} logEntries
+     */
     function displayRunningLog(logEntries) {
-        const logList = document.getElementById("task-log");
-        logList.innerHTML = logEntries.length
-            ? logEntries.map(entry => `<li><strong>${entry.first_name} ${entry.last_name}:</strong> ${entry.action} <small>(${formatDateTime(entry.created_at)})</small></li>`).join("")
+        const list = document.getElementById("task-log");
+        list.innerHTML = logEntries.length
+            ? logEntries.map(l => `
+                <li class="log-entry">
+                    <strong>${l.first_name} ${l.last_name}:</strong> ${l.action}
+                    <small>(${formatDateTime(l.created_at)})</small>
+                </li>`).join("")
             : "<p>No log entries yet.</p>";
     }
 
-    //add comment function
+    /**
+     * Add a new comment to the task
+     */
     window.addComment = async function () {
-        const commentInput = document.getElementById("new-comment");
-        const taskIdField = document.getElementById("task-id");
+        const comment = document.getElementById("new-comment").value.trim();
+        const taskId = document.getElementById("task-id").value;
 
-        if (!commentInput) {
-            console.error("❌ Error: 'new-comment' field not found in the DOM!");
-            return;
-        }
-
-        if (!taskIdField) {
-            console.error("❌ Error: 'task-id' field not found in the DOM!");
-            return;
-        }
-
-        const taskId = taskIdField.value;
-        const commentText = commentInput.value.trim();
-
-        if (!commentText) {
-            alert("Comment cannot be empty!");
-            return;
-        }
+        if (!comment) return showToast("⚠️ Comment cannot be empty!", "error");
 
         try {
             const response = await fetch("../php/add_comment.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `task_id=${taskId}&comment=${encodeURIComponent(commentText)}`
+                body: `task_id=${taskId}&comment=${encodeURIComponent(comment)}`
             });
 
             const data = await response.json();
-            console.log("💬 Comment Response:", data);
-
             if (data.success) {
-                //clear input field
-                commentInput.value = "";
-
-                //refresh comments
+                document.getElementById("new-comment").value = "";
                 fetchTaskLog(taskId);
-            } else {
-                alert(data.message);
             }
-        } catch (error) {
-            console.error("❌ Error adding comment:", error);
-            alert("Failed to add comment. Please try again.");
+            else {
+                showToast(data.message, "error");
+            }
+        }
+        catch {
+            showToast("Failed to add comment.", "error");
         }
     };
 
-    //function to go back to the task list view from the task details view
+    /**
+     * Return from task details to task list
+     */
     window.goBack = function () {
         taskDetails.style.display = "none";
         taskList.style.display = "block";
         filterContainer.style.display = "block";
         userHeader.style.display = "block";
+        document.getElementById("task-toggle").style.display = "flex";
+        document.getElementById("current-view-label").style.display = "block";
     };
 
-    //function to toggle the filter panel visibility
+    /**
+     * Toggle visibility of the filter panel
+     */
     window.toggleFilters = function () {
         filterPanel.classList.toggle("hidden");
     };
 
-    //function to switch between "My Tasks" and "All Tasks"
+    /**
+     * Switch between "my tasks" and "all tasks"
+     * @param {string} viewType
+     */
     window.toggleTaskView = function (viewType) {
         console.log("📌 Switching to:", viewType);
         currentView = viewType;
+        document.getElementById("current-view-label").innerText =
+            viewType === "my-tasks" ? "📋 Viewing: My Tasks" : "📋 Viewing: All Tasks";
         displayTasks(viewType === "my-tasks" ? myTasks : allTasks);
     };
 
-    //attach event listeners to the toggle buttons
+    //apply click listeners to toggle buttons
     toggleButtons.forEach(button => {
         button.addEventListener("click", function () {
             toggleTaskView(this.getAttribute("data-view"));
         });
     });
 
-    //fetch tasks when the page loads
+    /**
+     * Upload a file for a task
+     */
+    document.getElementById("upload-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.set("task_id", document.getElementById("task-id").value);
+
+        try {
+            const response = await fetch("../php/upload_task_file.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                showToast("File uploaded successfully!", "success");
+                loadFiles(formData.get("task_id"));
+                this.reset();
+            } else {
+                showToast(data.message, "error");
+            }
+        } catch {
+            showToast("❌ Upload failed.", "error");
+        }
+    });
+
+    /**
+     * Load files for a task
+     * @param {number} taskId
+     */
+    async function loadFiles(taskId) {
+        try {
+            const res = await fetch(`../php/fetch_task_files.php?task_id=${taskId}`);
+            const data = await res.json();
+
+            const fileList = document.getElementById("file-list");
+            fileList.innerHTML = data.success && data.files.length
+                ? data.files.map(f => `<li><a href="${f.file_path}" target="_blank">${f.file_name}</a></li>`).join("")
+                : "<p>No files uploaded yet.</p>";
+        } catch {
+            document.getElementById("file-list").innerHTML = "<p>Error loading files.</p>";
+        }
+    }
+
+    /**
+     * Toggle an action's completion status
+     * @param {number} actionId
+     */
+    window.toggleActionCompletion = async function (actionId) {
+        const task = [...myTasks, ...allTasks].find(t => t.actions.some(a => a.id === actionId));
+        const action = task?.actions.find(a => a.id === actionId);
+
+        if (!action) return showToast("❌ Action not found.", "error");
+
+        const confirmed = confirm(
+            action.completed
+                ? "Are you sure you want to mark this action as INCOMPLETE?"
+                : "Are you sure you want to mark this action as COMPLETE?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const res = await fetch(`../php/update_task_action.php?action_id=${actionId}`, { method: "POST" });
+            const data = await res.json();
+
+            if (data.success) {
+                action.completed = !action.completed;
+                showToast(`✅ Action ${action.completed ? "marked as complete" : "marked as incomplete"}`, "success");
+                openTask(task.id, currentView);
+                fetchTaskLog(task.id);
+            } else {
+                showToast("❌ Failed to update action status.", "error");
+            }
+        } catch {
+            showToast("❌ Something went wrong.", "error");
+        }
+    };
+
+    /**
+     * Update the status of a task
+     * @param {number} taskId
+     * @param {string} newStatus
+     */
+    window.updateTaskStatus = async function (taskId, newStatus) {
+        try {
+            const response = await fetch("../php/update_task_status.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `task_id=${taskId}&new_status=${encodeURIComponent(newStatus)}`
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                showToast("✅ Status updated successfully!", "success");
+                fetchTaskLog(taskId);
+                await fetchTasks();
+                openTask(parseInt(taskId), currentView);
+            } else {
+                showToast(data.message || "❌ Failed to update status.", "error");
+            }
+        } catch {
+            showToast("❌ Error changing status.", "error");
+        }
+    };
+
+    /**
+     * Show a toast-style alert popup
+     * @param {string} message - Message to display
+     * @param {string} type - Toast type (success/error)
+     */
+    function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+
+        toast.className = `toast ${type}`;
+        toast.innerText = message;
+        toast.classList.remove("hidden");
+
+        setTimeout(() => toast.classList.add("show"), 10);
+        setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.classList.add("hidden"), 300);
+        }, 3000);
+    }
+
+    //load tasks initially
     fetchTasks();
 });
